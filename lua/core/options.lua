@@ -1,5 +1,10 @@
+vim.opt.shortmess:append("cI")
+vim.opt.cmdheight = 0
+vim.opt.shortmess:append("sI")
+vim.opt.report = 9999
+
 -- Neovide specific settings
-vim.g.neovide_scale_factor = 0.75
+vim.g.neovide_scale_factor = 0.85
 vim.g.neovide_hide_mouse_when_typing = true
 vim.g.neovide_confirm_quit = true
 vim.g.neovide_remember_window_size = true
@@ -19,7 +24,7 @@ vim.g.neovide_title_text_color = "white"
 vim.o.guifont = "FiraCode_Nerd_Font_Mono:h14"
 
 -- Set the overall window transparency to be very high
-vim.g.neovide_opacity = 0.90
+vim.g.neovide_opacity = 0.70
 vim.g.transparency = 0.8
 
 -- Optional: You can also make the content (text) area have a slight tint
@@ -29,7 +34,7 @@ local alpha = function()
 	return string.format("%x", math.floor(255 * (vim.g.editor_opacity or 0.92)))
 end
 vim.g.editor_opacity = 0.92 -- Slightly more opaque than the window for contrast
-vim.g.neovide_background_color = "#1e1e1e" .. alpha()
+-- vim.g.neovide_background_color = "#1e1e1e" .. alpha()
 
 -------------------------------------------------------------------------------------------------
 -- Neovim specific settings

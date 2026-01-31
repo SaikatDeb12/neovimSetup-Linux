@@ -1,7 +1,8 @@
 require("core.options")
 require("core.keymaps")
+
 -- [[ Install `lazy.nvim` plugin manager ]]
--- See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
+--    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -10,9 +11,11 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 		error("Error cloning lazy.nvim:\n" .. out)
 	end
 end
+
 ---@type vim.Option
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
+
 require("lazy").setup({
 	require("plugins.neotree"),
 	require("plugins.colortheme"),
@@ -27,14 +30,16 @@ require("lazy").setup({
 	require("plugins.alpha"),
 	require("plugins.indent-blankline"),
 	require("plugins.misc"),
+	require("plugins.ts-autotag"),
+	-- require("plugins.wakatime"),
 	require("plugins.cursorline"),
 	require("plugins.neoscroll"),
 	require("plugins.tailwindcss-colors"),
 	require("plugins.luasnip"),
+	require("plugins.competitive"),
+	-- require("plugins.live-server"),
+	require("plugins.go"),
 })
-vim.g.catppuccin_flavour = "dark"
+
+vim.g.catppuccin_flavor = "dark"
 vim.cmd.colorscheme("catppuccin")
--- vim.cmd.colorscheme("ayu-mirage")
--- vim.cmd.colorscheme("tokyonight")
--- vim.cmd.colorscheme("bamboo")
--- vim.cmd.colorscheme("darcula-dark")

@@ -1,102 +1,86 @@
-return {
+return { -- Highlight, edit, and navigate code
 	"nvim-treesitter/nvim-treesitter",
 	build = ":TSUpdate",
-	event = { "BufReadPost", "BufNewFile" },
 	dependencies = {
-		-- For better Go support
+		-- Go-specific treesitter modules
 		"nvim-treesitter/nvim-treesitter-textobjects",
-		"JoosepAlviste/nvim-ts-context-commentstring",
 	},
-	config = function()
-		-- Safely require the module with error handling
-		local ok, configs = pcall(require, "nvim-treesitter.configs")
-		if not ok then
-			vim.notify("nvim-treesitter.configs not found, skipping setup", vim.log.levels.WARN)
-			return
-		end
-		configs.setup({
-			ensure_installed = {
-				-- Go should be first for priority
-				"go",
-				"gomod",
-				"gowork",
-				"gosum",
-				-- Other languages
-				"lua",
-				"python",
-				"javascript",
-				"typescript",
-				"vimdoc",
-				"vim",
-				"regex",
-				"terraform",
-				"sql",
-				"dockerfile",
-				"toml",
-				"json",
-				"java",
-				"groovy",
-				"gitignore",
-				"graphql",
-				"yaml",
-				"make",
-				"cmake",
-				"markdown",
-				"markdown_inline",
-				"bash",
-				"tsx",
-				"css",
-				"html",
-				"cpp",
-			},
-			auto_install = true,
-			highlight = {
+	main = "nvim-treesitter.configs", -- Sets main module to use for opts
+	-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+	opts = {
+		ensure_installed = {
+			"go",
+			"gomod",
+			"gosum",
+			"gowork",
+			"lua",
+			"python",
+			"javascript",
+			"typescript",
+			"vimdoc",
+			"vim",
+			"regex",
+			"terraform",
+			"sql",
+			"dockerfile",
+			"toml",
+			"json",
+			"yaml",
+			"bash",
+			"markdown",
+			"markdown_inline",
+			"html",
+			"css",
+			"cpp",
+			"make",
+			"cmake",
+		},
+		-- Autoinstall languages that are not installed
+		auto_install = true,
+		highlight = {
+			enable = true,
+			-- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
+			--  If you are experiencing weird indenting issues, add the language to
+			--  the list of additional_vim_regex_highlighting and disabled languages for indent.
+			additional_vim_regex_highlighting = false,
+		},
+		indent = { enable = true },
+		textobjects = {
+			select = {
 				enable = true,
-				additional_vim_regex_highlighting = { "ruby" },
-			},
-			indent = {
-				enable = true,
-				disable = { "ruby", "python" },
-			},
-			-- Text objects for better editing
-			textobjects = {
-				select = {
-					enable = true,
-					lookahead = true,
-					keymaps = {
-						-- Go-specific text objects
-						["af"] = "@function.outer",
-						["if"] = "@function.inner",
-						["ac"] = "@class.outer",
-						["ic"] = "@class.inner",
-						["ab"] = "@block.outer",
-						["ib"] = "@block.inner",
-					},
-				},
-			},
-			-- Context-aware commenting
-			context_commentstring = {
-				enable = true,
-				enable_autocmd = false,
-			},
-			-- Incremental selection
-			incremental_selection = {
-				enable = true,
+				lookahead = true,
 				keymaps = {
-					init_selection = "gnn",
-					node_incremental = "grn",
-					scope_incremental = "grc",
-					node_decremental = "grm",
+					-- Go-specific text objects
+					["af"] = "@function.outer",
+					["if"] = "@function.inner",
+					["ac"] = "@class.outer",
+					["ic"] = "@class.inner",
+					["ab"] = "@block.outer",
+					["ib"] = "@block.inner",
+					["ap"] = "@parameter.outer",
+					["ip"] = "@parameter.inner",
 				},
 			},
-		})
-		-- Additional Go-specific highlighting
-		vim.api.nvim_create_autocmd("FileType", {
-			pattern = "go",
-			callback = function()
-				-- Set comment string for Go
-				vim.bo.commentstring = "// %s"
-			end,
-		})
-	end,
+			move = {
+				enable = true,
+				set_jumps = true,
+				goto_next_start = {
+					["]m"] = "@function.outer",
+					["]]"] = "@class.outer",
+				},
+				goto_next_end = {
+					["]M"] = "@function.outer",
+					["]["] = "@class.outer",
+				},
+				goto_previous_start = {
+					["[m"] = "@function.outer",
+					["[["] = "@class.outer",
+				},
+				goto_previous_end = {
+					["[M"] = "@function.outer",
+					["[]"] = "@class.outer",
+				},
+			},
+		},
+	},
 }

@@ -1,28 +1,33 @@
+-- autoformatting.lua
+
 -- Configuration for none-ls.nvim to manage formatters and linters
--- Updated to work with gopls for Go formatting and include all file types
+-- Sets up autoformatting for various file types, standardizes indentation to 4 spaces,
+-- and enables permanent line wrapping for long lines.
+
 return {
 	"nvimtools/none-ls.nvim",
 	dependencies = {
 		"nvimtools/none-ls-extras.nvim",
+		"williamboman/mason.nvim", -- Add this for Mason integration
 	},
 	config = function()
 		-- Set global Neovim options for consistent indentation and line wrapping
-		vim.opt.tabstop = 4 -- Tabs are 4 spaces wide
-		vim.opt.shiftwidth = 4 -- Indentation (e.g., >>) is 4 spaces
-		vim.opt.expandtab = true -- Convert tabs to spaces
-		vim.opt.wrap = true -- Enable line wrapping for long lines
-		-- Check if null-ls is available
-		local ok, null_ls = pcall(require, "null-ls")
-		if not ok then
-			vim.notify("null-ls not found, skipping autoformatting setup", vim.log.levels.WARN)
-			return
-		end
+		vim.o.tabstop = 4 -- Tabs are 4 spaces wide
+		vim.o.shiftwidth = 4 -- Indentation (e.g., >>) is 4 spaces
+		vim.o.expandtab = true -- Convert tabs to spaces
+		vim.o.wrap = true -- Enable line wrapping for long lines
+
+		local null_ls = require("null-ls")
 		local formatting = null_ls.builtins.formatting -- to setup formatters
 		local diagnostics = null_ls.builtins.diagnostics -- to setup linters
-		-- Note: Go formatting is handled by gopls in lsp.lua
-		-- We'll skip Go formatters here to avoid conflicts
+
+		-- Register Go formatters
 		local sources = {
-			diagnostics.checkmake,
+			-- Go formatting and linting
+			formatting.gofumpt, -- More strict gofmt
+			formatting.goimports, -- Organizes imports and formats code
+			diagnostics.golangci_lint, -- Comprehensive Go linter
+
 			-- JS/TS
 			formatting.prettier.with({
 				filetypes = {
@@ -44,12 +49,20 @@ return {
 					"false", -- Use spaces instead of tabs
 				},
 			}),
-			formatting.stylua, -- Already defaults to 4 spaces
+
+			-- Lua
+			formatting.stylua,
+
+			-- Shell
 			formatting.shfmt.with({ args = { "-i", "4" } }),
+
+			-- Terraform
 			formatting.terraform_fmt,
+
 			-- Python
 			require("none-ls.formatting.ruff").with({ extra_args = { "--extend-select", "I" } }),
 			require("none-ls.formatting.ruff_format"),
+
 			-- C/C++
 			formatting.clang_format.with({
 				filetypes = { "c", "cpp", "objc", "objcpp" },
@@ -58,33 +71,33 @@ return {
 					"{IndentWidth: 4, TabWidth: 4, UseTab: Never}",
 				},
 			}),
-			-- SQL
-			formatting.sql_formatter.with({
-				extra_args = { "--tab-width", "4" },
-			}),
-			-- Note: Go formatters are handled by gopls in lsp.lua
-			-- Do NOT add Go formatters here to avoid conflicts
+
+			-- Makefile
+			diagnostics.checkmake,
+
+			-- JSON
+			diagnostics.jsonlint,
+
+			-- YAML
+			diagnostics.yamllint,
 		}
+
 		local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 		null_ls.setup({
+			-- debug = true, -- Enable debug mode. Inspect logs with :NullLsLog.
 			sources = sources,
 			on_attach = function(client, bufnr)
-				-- Skip formatting for Go files (handled by gopls)
-				if vim.bo[bufnr].filetype == "go" then
-					return
-				end
-				if client.supports_method("textDocument/formatting") then
+				if client:supports_method("textDocument/formatting") then
 					vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
 					vim.api.nvim_create_autocmd("BufWritePre", {
 						group = augroup,
 						buffer = bufnr,
 						callback = function()
 							vim.lsp.buf.format({
-								bufnr = bufnr,
 								async = false,
-								filter = function(cli)
-									-- Use null-ls for formatting (except for Go)
-									return cli.name == "null-ls"
+								filter = function(client)
+									-- Use null-ls for formatting instead of gopls
+									return client.name == "null-ls"
 								end,
 							})
 						end,
@@ -92,55 +105,12 @@ return {
 				end
 			end,
 		})
-		-- Set up auto-formatting for all file types
-		-- Go is handled separately in lsp.lua
+
+		-- Auto-format Go files on save
 		vim.api.nvim_create_autocmd("BufWritePre", {
-			group = vim.api.nvim_create_augroup("AutoFormat", { clear = true }),
-			callback = function(args)
-				local bufnr = args.buf
-				local filetype = vim.bo[bufnr].filetype
-				-- Skip Go files (handled by gopls)
-				if filetype == "go" then
-					return
-				end
-				-- Format using LSP if available
-				vim.lsp.buf.format({
-					bufnr = bufnr,
-					async = false,
-					filter = function(client)
-						-- Use null-ls for non-Go files
-						return client.name == "null-ls"
-					end,
-				})
-			end,
-		})
-		-- Filetype-specific settings
-		vim.api.nvim_create_autocmd("FileType", {
-			pattern = {
-				"javascript",
-				"typescript",
-				"javascriptreact",
-				"typescriptreact",
-				"html",
-				"css",
-				"scss",
-				"json",
-				"yaml",
-				"markdown",
-				"python",
-				"lua",
-				"sh",
-				"bash",
-				"terraform",
-				"c",
-				"cpp",
-				"objc",
-				"objcpp",
-				"sql",
-			},
+			pattern = "*.go",
 			callback = function()
-				-- Enable auto-formatting for these file types
-				vim.b.autoformat = true
+				vim.lsp.buf.format({ async = false })
 			end,
 		})
 	end,
