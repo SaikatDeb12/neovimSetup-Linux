@@ -31,13 +31,13 @@ require("lazy").setup({
 	require("plugins.indent-blankline"),
 	require("plugins.misc"),
 	require("plugins.ts-autotag"),
-	-- require("plugins.wakatime"),
+	require("plugins.wakatime"),
 	require("plugins.cursorline"),
 	require("plugins.neoscroll"),
 	require("plugins.tailwindcss-colors"),
 	require("plugins.luasnip"),
 	require("plugins.competitive"),
-	-- require("plugins.live-server"),
+	-- require("plugins.smear-cursor"),
 	require("plugins.go"),
 })
 

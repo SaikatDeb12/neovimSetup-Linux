@@ -5,6 +5,6 @@ return {
 		smear_between_neighbor_lines = true,
 		smear_insert_mode = true,
 		time_interval = 7, -- lower = faster animation
-		damping = 0.65, -- lower = more bouncy
+		damping = 0.85, -- lower = more bouncy
 	},
 }

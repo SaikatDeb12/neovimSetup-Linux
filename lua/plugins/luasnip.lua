@@ -5,7 +5,7 @@ return {
 		build = "make install_jsregexp", -- Optional
 		config = function()
 			require("luasnip.loaders.from_lua").lazy_load({
-				paths = "C:/Users/saika/AppData/Local/nvim/lua/snippets",
+				paths = "/home/remotestate/.config/nvim/lua/snippets/",
 			})
 		end,
 	},

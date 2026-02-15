@@ -28,7 +28,7 @@ return {
 		"windwp/nvim-autopairs",
 
 		-- Go-specific completion source
-		"hrsh7th/cmp-nvim-lsp-signature-help",
+		-- "hrsh7th/cmp-nvim-lsp-signature-help",
 	},
 	config = function()
 		local cmp = require("cmp")
@@ -141,7 +141,7 @@ return {
 				end,
 			},
 			experimental = {
-				ghost_text = true,
+				ghost_text = false,
 			},
 		})
 
