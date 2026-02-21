@@ -76,7 +76,7 @@ return {
 			diagnostics.checkmake,
 
 			-- JSON
-			diagnostics.jsonlint,
+			-- diagnostics.jsonlint,
 
 			-- YAML
 			diagnostics.yamllint,
