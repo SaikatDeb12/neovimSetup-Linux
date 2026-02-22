@@ -2,9 +2,18 @@ vim.opt.shortmess:append("cI")
 vim.opt.cmdheight = 0
 vim.opt.shortmess:append("sI")
 vim.opt.report = 9999
+vim.opt.title = true
+
+-- Function to get current working directory name
+local function get_project_name()
+	return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+end
+
+-- Set title string
+vim.opt.titlestring = get_project_name() .. " - Neovide"
 
 -- Neovide specific settings
-vim.g.neovide_scale_factor = 0.85
+vim.g.neovide_scale_factor = 0.95
 vim.g.neovide_hide_mouse_when_typing = true
 vim.g.neovide_confirm_quit = true
 vim.g.neovide_remember_window_size = true
@@ -24,7 +33,7 @@ vim.g.neovide_title_text_color = "white"
 vim.o.guifont = "FiraCode_Nerd_Font_Mono:h14"
 
 -- Set the overall window transparency to be very high
-vim.g.neovide_opacity = 0.70
+vim.g.neovide_opacity = 0.93
 vim.g.transparency = 0.8
 
 -- Optional: You can also make the content (text) area have a slight tint

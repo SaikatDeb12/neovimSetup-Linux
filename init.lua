@@ -46,3 +46,4 @@ require("lazy").setup({
 
 vim.g.catppuccin_flavor = "dark"
 vim.cmd.colorscheme("catppuccin")
+-- vim.cmd.colorscheme("bamboo")
