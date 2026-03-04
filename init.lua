@@ -42,6 +42,7 @@ require("lazy").setup({
 	require("plugins.undotree"),
 	require("plugins.snipe"),
 	require("plugins.oil"),
+	require("plugins.harpoon"),
 })
 
 vim.g.catppuccin_flavor = "dark"

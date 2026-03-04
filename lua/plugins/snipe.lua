@@ -13,6 +13,9 @@ return {
 		ui = {
 			position = "center",
 		},
+		format = function(buf)
+			return vim.fn.fnamemodify(buf.name, ":t")
+		end,
 		navigate = {
 			next = "j",
 			prev = "k",

@@ -117,7 +117,9 @@ return {
 						fallback()
 					end
 				end, { "i", "s" }),
-				["<CR>"] = cmp.mapping.confirm({ select = true }),
+				["<CR>"] = cmp.mapping(function(fallback)
+					fallback()
+				end, { "i", "s" }),
 			}),
 			sources = {
 				{ name = "nvim_lsp" },
